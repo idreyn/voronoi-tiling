@@ -3,7 +3,7 @@ import React, {Component} from "react";
 import {generateDiagram, circularPerturbation} from "./geom.js";
 
 class VoronoiRender extends Component {
-    static defaultProps = {overfill: 1.1};
+    static defaultProps = {overfill: 0.1};
 
     renderCell(cell, key) {
         const {overfill} = this.props;
@@ -11,45 +11,46 @@ class VoronoiRender extends Component {
         return <polygon
             key={key}
             points={points
-                .map(({x, y}) => ({x: x * overfill, y: y * overfill}))
                 .map(({x, y}) => `${x},${y}`).join(" ")}
             style={{
                 fill: "orange",
                 fillRule: "evenodd",
-                opacity: (1 + cell.index % 10) / 10,
+                opacity: (cell.index % 10) / 10,
             }}
         />;
     }
 
     render() {
         const {diagram, width, height, overfill} = this.props;
-        const outerStyle = {
-            overflow: "hidden",
-            position: "relative",
-            width,
-            height,
-        };
-        const innerStyle = {
-            position: "absolute",
-            left: width * (1 - overfill) / 2,
-            top: height * (1 - overfill) / 2,
-        };
-        return <div style={outerStyle}>
+        const viewBox = [
+            overfill * width / 2,
+            overfill * height / 2,
+            width * (1 - overfill),
+            height * (1 - overfill),
+        ];
+        return <div style={{height: "100vh", overflow: "hidden"}}>
             <svg
-                width={width * overfill}
-                height={height * overfill}
-                style={innerStyle}
+                width={"100%"}
+                height={"100%"}
+                viewBox={viewBox.map(s => s.toString()).join(" ")}
+                preserveAspectRatio="xMidYMid slice"
             >
                 {diagram.cells.map((cell, i) => this.renderCell(cell, i))}
             </svg>
         </div>;
+
     }
 }
 
 export default class Voronoi extends Component {
     componentWillMount() {
-        const {width, height, size, wobble} = this.props;
-        const diagram = generateDiagram(width, height, size, size * 2);
+        const {width, height, cellSize, wobble} = this.props;
+        const diagram = generateDiagram(
+            width,
+            height,
+            cellSize,
+            cellSize * 2
+        );
         const perturbations = diagram.points.map(
             _ => circularPerturbation(
                 wobble * Math.random(),

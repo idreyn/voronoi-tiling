@@ -5,9 +5,9 @@ import Voronoi from "./Voronoi.js";
 export default class App extends Component {
   render() {
       return <Voronoi
-        width={window.innerWidth}
-        height={window.innerHeight}
-        size={500}
+        width={768}
+        height={576}
+        cellSize={300}
         wobble={3}
       />;
   }
