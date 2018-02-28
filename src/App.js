@@ -8,7 +8,7 @@ export default class App extends Component {
         width={768}
         height={576}
         cellSize={300}
-        wobble={3}
+        wobble={1}
       />;
   }
 }

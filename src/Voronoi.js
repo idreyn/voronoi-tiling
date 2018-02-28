@@ -53,7 +53,7 @@ export default class Voronoi extends Component {
         );
         const perturbations = diagram.points.map(
             _ => circularPerturbation(
-                wobble * Math.random(),
+                wobble,
                 0.001 + 0.002 * Math.random()
             )
         );
